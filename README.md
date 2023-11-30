@@ -1,6 +1,6 @@
 # Elixiraoc
 
-**TODO: Add description**
+This is an Elixir project generated with Mix to record my answers of [Advent of Code 2023](https://adventofcode.com/2023)
 
 ## Installation
 
