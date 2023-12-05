@@ -8,7 +8,6 @@ defmodule Day3_test do
 
   test "Test the day 3 Puzzle 2" do
     assert Day3.puzzle2("test/testfiles/day3_test.txt") == 467835
-    Day3.puzzle2("test/testfiles/day3_input.txt") |> IO.puts
   end
 
   test "Parse one symbol" do
