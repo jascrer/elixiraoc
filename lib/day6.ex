@@ -68,4 +68,15 @@ defmodule Day6 do
     {number, ""} = Integer.parse(s_number)
     number
   end
+
+  @doc """
+  Solution using formula of askalski from reddit
+  https://www.reddit.com/r/adventofcode/comments/18bwe6t/comment/kcaqvb3/?utm_source=share&utm_medium=web2x&context=3
+  """
+  @spec puzzle2_math(String.t()) :: integer()
+  def puzzle2_math(fileName) do
+    {:ok, contents} = File.read(fileName)
+    [{time, distance}] =parse_time(contents)
+    2 * trunc(:math.sqrt(:math.pow(trunc(time / 2), 2) - distance)) + 1
+  end
 end
