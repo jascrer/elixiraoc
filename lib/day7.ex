@@ -137,7 +137,90 @@ defmodule Day7 do
   def puzzle2(fileName) do
     {:ok, contents} = File.read(fileName)
     parse_cards(contents)
-    0
+    |> hand_classifier2
+    |> compare_classes2
+    |> total_winnings
+    |> Enum.sum
+  end
+
+  @spec hand_classifier2([{String.t(), integer()}]) :: map()
+  def hand_classifier2(hands) do
+    classifier = [{:high, []}, {:one, []}, {:two, []}, {:three, []}, {:full, []}, {:four, []}, {:five, []}]
+    hand_classifier2(hands, Map.new(classifier))
+  end
+  def hand_classifier2([], classifier) do
+    classifier
+  end
+  def hand_classifier2([{hand, bid} | tail], classifier) do
+    cond do
+      String.graphemes(hand) |> Enum.count(& &1 == "J") > 0 -> hand_classifier2(tail, joker_hands({hand,bid}, classifier))
+      true -> hand_classifier2(tail, classic_hands({hand,bid}, classifier))
+    end
+  end
+
+  def joker_hands({hand, bid}, classifier) do
+    case String.graphemes(hand) |> MapSet.new |> MapSet.size do
+      1 -> add_to_classifier({hand, bid}, classifier, :five)
+      2 -> add_to_classifier({hand, bid}, classifier, :five)
+      3 -> alone_joker({hand, bid}, classifier)
+      4 -> add_to_classifier({hand, bid}, classifier, :three)
+      _ -> add_to_classifier({hand, bid}, classifier, :one)
+    end
+  end
+
+  def alone_joker({hand, bid}, classifier) do
+    mapset_list = String.graphemes(hand) |> MapSet.new |> MapSet.to_list()
+    zero_list = List.duplicate(0, length(mapset_list))
+    counters = mapset_list |> Enum.zip(zero_list) |> Map.new
+    case count_symbols(String.graphemes(hand), counters) do
+      [{_,2},{_,2},{"J", 1}] -> add_to_classifier({hand, bid}, classifier, :full)
+      _ -> add_to_classifier({hand, bid}, classifier, :four)
+    end
+  end
+
+  defp count_symbols([], counters) do
+    result = Map.to_list(counters)
+    |> Enum.sort(fn({_, p1},{_, p2}) -> p1 > p2 end)
+    IO.inspect(result)
+    result
+  end
+  defp count_symbols([str | tail], counters) do
+    new_counter = Map.fetch!(counters, str) + 1
+    count_symbols(tail, Map.put(counters, str, new_counter))
+  end
+
+
+  def compare_classes2(classifier) do
+    compare_classes2(classifier, :high)
+    |> compare_classes2(:one)
+    |> compare_classes2(:two)
+    |> compare_classes2(:three)
+    |> compare_classes2(:full)
+    |> compare_classes2(:four)
+    |> compare_classes2(:five)
+  end
+  def compare_classes2(classifier, token) do
+    hands = Map.fetch!(classifier, token)
+    |> Enum.sort(fn({hand1, _}, {hand2, _}) -> compare_hands2(String.graphemes(hand1), String.graphemes(hand2)) end)
+    Map.put(classifier, token, hands)
+  end
+
+  def compare_hands2([h1|t1], [h2 | t2]) do
+    cond do
+      card_points2(h1) === card_points2(h2) -> compare_hands2(t1, t2)
+      card_points2(h1) < card_points2(h2) -> true
+      true -> false
+    end
+  end
+
+  def classic_hands({hand, bid}, classifier) do
+    case String.graphemes(hand) |> MapSet.new |> MapSet.size do
+      5 -> add_to_classifier({hand, bid}, classifier, :high)
+      4 -> add_to_classifier({hand, bid}, classifier, :one)
+      1 -> add_to_classifier({hand, bid}, classifier, :five)
+      2 -> is_fourkind({hand, bid}, classifier)
+      _ -> is_threekind({hand, bid}, classifier)
+    end
   end
 
   def card_points2("A") do
