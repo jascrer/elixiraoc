@@ -179,10 +179,8 @@ defmodule Day7 do
   end
 
   defp count_symbols([], counters) do
-    result = Map.to_list(counters)
+    Map.to_list(counters)
     |> Enum.sort(fn({_, p1},{_, p2}) -> p1 > p2 end)
-    IO.inspect(result)
-    result
   end
   defp count_symbols([str | tail], counters) do
     new_counter = Map.fetch!(counters, str) + 1
