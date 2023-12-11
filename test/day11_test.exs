@@ -9,6 +9,5 @@ defmodule Day11_test do
   test "Test the day 11 puzzle 2 against the example file" do
     assert Day11.puzzle2("test/testfiles/day11_test.txt", 10) == 1030
     assert Day11.puzzle2("test/testfiles/day11_test.txt", 100) == 8410
-    Day11.puzzle2("test/testfiles/day11_input.txt", 1000000) |> IO.inspect()
   end
 end
