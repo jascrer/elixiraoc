@@ -7,8 +7,8 @@ defmodule Day13_test do
   end
 
   test "Test the day 13 puzzle 2 against the example file" do
-    #assert Day13.puzzle2("test/testfiles/day13_test.txt") == 400
-    Day13.puzzle2("test/testfiles/day13_input.txt") |> IO.inspect()
+    assert Day13.puzzle2("test/testfiles/day13_test.txt") == 400
+    #Day13.puzzle2("test/testfiles/day13_input.txt") |> IO.inspect()
   end
 
   test "Index can propagate horizontal" do
