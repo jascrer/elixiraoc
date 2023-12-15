@@ -11,18 +11,14 @@ defmodule Day9 do
   def puzzle1(fileName) do
     {:ok, contents} = File.read(fileName)
     parse_series(contents)
-    |> get_sequences()
+    |> Enum.map(& get_sequence(&1) |> Enum.map(fn(t) -> List.last(t) end) |> Enum.sum)
     |> Enum.sum
   end
 
   @spec parse_series(String.t()) :: list()
   def parse_series(input) do
     String.split(input, "\n")
-    |> Enum.map(fn(series) -> String.split(series, " ") |> Enum.map(fn(num) -> {p_num, ""} = Integer.parse(num); p_num end) end)
-  end
-
-  def get_sequences(series) do
-    Enum.map(series, fn(serie) -> get_sequence(serie) |> Enum.map(fn(t) -> List.last(t) end) |> Enum.sum end)
+    |> Enum.map(& String.split(&1, " ") |> Enum.map(fn(num) -> {p_num, ""} = Integer.parse(num); p_num end))
   end
 
   def get_sequence(serie) do
@@ -31,18 +27,14 @@ defmodule Day9 do
   def get_sequence(serie, acc) do
     n_seq = new_sequence(serie, [])
     cond do
-      Enum.filter(n_seq, fn(el) -> el !== 0 end) |> length === 0 -> Enum.reverse(acc ++ [n_seq])
+      Enum.filter(n_seq, & &1 !== 0) |> length === 0 -> Enum.reverse(acc ++ [n_seq])
       true -> get_sequence(n_seq, acc ++ [n_seq])
     end
   end
 
   @spec new_sequence(list(), list()) :: list()
-  def new_sequence(seq, acc) when length(seq) == 1 do
-    acc
-  end
-  def new_sequence([first, second | tail], acc) do
-    new_sequence([second | tail], acc ++ [second - first])
-  end
+  def new_sequence(seq, acc) when length(seq) == 1, do: acc
+  def new_sequence([first, second | tail], acc), do: new_sequence([second | tail], acc ++ [second - first])
 
   @doc """
   Solution for Day 9 Puzzle 2
@@ -51,12 +43,9 @@ defmodule Day9 do
   def puzzle2(fileName) do
     {:ok, contents} = File.read(fileName)
     parse_series(contents)
-    |> get_sequences2()
+    |> Enum.map(& Enum.reverse(&1) |> get_sequence() |> Enum.map(fn(t) -> List.last(t) end) |> Enum.sum)
     |> Enum.sum
   end
 
-  def get_sequences2(series) do
-    Enum.map(series, fn(serie) -> Enum.reverse(serie) |> get_sequence() |> Enum.map(fn(t) -> List.last(t) end) |> Enum.sum end)
-  end
 
 end
