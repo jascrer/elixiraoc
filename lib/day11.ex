@@ -17,10 +17,7 @@ defmodule Day11 do
 
   def parse_galaxies(input) do
     String.split(input, "\n")
-    |> Enum.map(
-      fn(space) ->
-        String.graphemes(space)
-      end)
+    |> Enum.map(& String.graphemes(&1))
     |> expand_space()
     |> Enum.map(
       fn(space) ->
@@ -40,12 +37,10 @@ defmodule Day11 do
     |> transpose()
   end
 
-  def expand([], acc) do
-    acc
-  end
+  def expand([], acc), do: acc
   def expand([head|tail], acc) do
     cond do
-      Enum.filter(head, fn(sim) -> sim !== "." end) |> length == 0 -> expand(tail, acc ++ [head] ++ [head])
+      Enum.filter(head, & &1 !== ".") |> length == 0 -> expand(tail, acc ++ [head] ++ [head])
       true-> expand(tail, acc ++ [head])
     end
   end
@@ -56,16 +51,10 @@ defmodule Day11 do
     [[x | (for [h | _t] <- xss, do: h)] | transpose([xs | (for [_h | t] <- xss, do: t)])]
   end
 
-  def get_distances([], acc) do
-    acc
-  end
-  def get_distances([head | tail], acc) do
-    get_distances(tail, get_distances(head, tail, acc))
-  end
-  def get_distances(_, [], acc) do
-    acc
-  end
-  def get_distances({x1, y1}, [{x2, y2} | tail], acc) do
+  defp get_distances([], acc), do: acc
+  defp get_distances([head | tail], acc), do: get_distances(tail, get_distances(head, tail, acc))
+  defp get_distances(_, [], acc), do: acc
+  defp get_distances({x1, y1}, [{x2, y2} | tail], acc) do
     diff_x = abs(x1 - x2)
     diff_y = abs(y1 - y2)
     get_distances({x1,y1}, tail, acc ++ [diff_x + diff_y])
@@ -88,10 +77,7 @@ defmodule Day11 do
 
   def parse_galaxies2(input) do
     String.split(input, "\n")
-    |> Enum.map(
-      fn(space) ->
-        String.graphemes(space)
-      end)
+    |> Enum.map(& String.graphemes(&1))
     |> Enum.map(
       fn(space) ->
         Enum.with_index(space)
