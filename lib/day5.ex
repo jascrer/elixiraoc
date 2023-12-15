@@ -39,21 +39,17 @@ defmodule Day5 do
   end
 
   def get_locations({seeds, maps}) do
-    Enum.map(seeds, fn(seed) -> seed_maps(seed, maps) end)
+    Enum.map(seeds, & seed_maps(&1, maps))
     |> Enum.min
   end
 
-  def seed_maps(seed, []) do
-    seed
-  end
+  def seed_maps(seed, []), do: seed
   def seed_maps(seed, [map | maps]) do
     n_seed = seed_map(seed, map)
     seed_maps(n_seed, maps)
   end
 
-  def seed_map(seed, []) do
-    seed
-  end
+  def seed_map(seed, []), do: seed
   def seed_map(seed, [{s, d, l} | t]) do
     case seed >= s and seed <= (s + (l-1)) do
       true -> (seed - s) + d
@@ -76,11 +72,7 @@ defmodule Day5 do
     {n_seeds, maps}
   end
 
-  def create_ranges([], acc) do
-    acc
-  end
-  def create_ranges([seeds, length | tail], acc) do
-    create_ranges(tail, acc ++ [{seeds, seeds + length - 1}])
-  end
+  def create_ranges([], acc), do: acc
+  def create_ranges([seeds, length | tail], acc), do: create_ranges(tail, acc ++ [{seeds, seeds + length - 1}])
 
 end
