@@ -17,7 +17,7 @@ defmodule Day8 do
   @spec parse_map(String.t()) :: {list(), map(), String.t()}
   def parse_map(input) do
     [instr, map] = String.split(input,"\n\n")
-    n_map = String.split(map, "\n") |> Enum.map(fn(node) -> parse_nodes(node) end)
+    n_map = String.split(map, "\n") |> Enum.map(& parse_nodes(&1))
     {String.graphemes(instr), n_map |> Map.new, "AAA"}
   end
 
@@ -27,9 +27,7 @@ defmodule Day8 do
     {source, {left, right}}
   end
 
-  def navigate(pair) do
-    navigate(pair, 0)
-  end
+  def navigate(pair), do: navigate(pair, 0)
   def navigate({instr, map, entry}, counter) do
     {n_counter, symbol} = navigate(instr, map, entry, counter)
     cond do
@@ -37,9 +35,7 @@ defmodule Day8 do
       true -> navigate({instr, map, symbol}, n_counter)
     end
   end
-  def navigate([], _map, entry, counter) do
-    {counter, entry}
-  end
+  def navigate([], _map, entry, counter), do: {counter, entry}
   def navigate([inst|tail], map, entry, counter) do
     {left, right} = Map.fetch!(map, entry)
     case inst do
@@ -61,13 +57,13 @@ defmodule Day8 do
   @spec parse_map2(String.t()) :: {list(), map(), list()}
   def parse_map2(input) do
     [instr, map] = String.split(input,"\n\n")
-    n_map = String.split(map, "\n") |> Enum.map(fn(node) -> parse_nodes(node) end) |> Map.new
+    n_map = String.split(map, "\n") |> Enum.map(& parse_nodes(&1)) |> Map.new
     {String.graphemes(instr), n_map, Map.keys(n_map) |> Enum.filter(& String.ends_with?(&1, "A"))}
   end
 
   # Using LCM to calculate the final result
   def navigate2({instr, map, nodes}) do
-    Enum.map(nodes,fn(entry)-> navigate({instr, map, entry}) end)
+    Enum.map(nodes,& navigate({instr, map, &1}))
     |> List.foldr(1, fn(counter, acc) -> Math.lcm(acc, counter) end)
   end
 
