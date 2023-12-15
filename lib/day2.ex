@@ -11,29 +11,29 @@ defmodule Day2 do
   def puzzle1(fileName) do
     {:ok, contents} = File.read(fileName)
     parse_games1(contents)
-    |> verify_game1()
-    |> List.foldr(0, fn({gameId, _subsets}, acc) -> gameId + acc end)
+    |> verify_game1
+    |> Enum.map(fn({gameId, _subsets}) -> gameId end)
+    |> Enum.sum
   end
 
   defp parse_games1(games) do
     String.split(games, "\n")
-    |> Enum.map(fn(game) -> format_game1(game) end )
+    |> Enum.map(& format_game1(&1))
   end
 
   defp format_game1(game) do
-    splitGame = String.split(game, ":")
-    {idGame, ""} = String.split(hd(splitGame), " ") |> tl |> hd |> Integer.parse
-    gamesInfo = tl(splitGame) |> hd
+    [head_game | tail_game] = String.split(game, ":")
+    {idGame, ""} = String.split(head_game, " ") |> tl |> hd |> Integer.parse
+    gamesInfo = tail_game |> hd
       |> String.split(";")
-      |> Enum.map(fn(subsets) -> String.split(subsets, ",") |> convert_cubes1 end)
+      |> Enum.map(& &1 |> String.split(",") |> convert_cubes1)
     {idGame, gamesInfo}
   end
 
   defp convert_cubes1(cubes) do
     Enum.map(cubes,
       fn(cube) ->
-        spCube = String.trim(cube, " ")
-        |> String.split(" ");
+        spCube = String.trim(cube, " ") |> String.split(" ");
         {number, ""} = hd(spCube) |> Integer.parse;
         case spCube do
           [_, "green"] -> {:green, number}
@@ -82,10 +82,7 @@ defmodule Day2 do
     Enum.map(games,
       fn({_gamesId, subsets}) ->
         max_cube = subset_power(subsets)
-        {:ok, red_value} = Map.fetch(max_cube, :red)
-        {:ok, green_value} = Map.fetch(max_cube, :green)
-        {:ok, blue_value} = Map.fetch(max_cube, :blue)
-        red_value*green_value*blue_value
+        Map.fetch!(max_cube, :red)*Map.fetch!(max_cube, :green)*Map.fetch!(max_cube, :blue)
       end)
   end
 
