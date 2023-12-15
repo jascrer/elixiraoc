@@ -17,27 +17,21 @@ defmodule Day7 do
     |> Enum.sum
   end
 
-  @spec parse_cards(String.t()) :: [{String.t(), integer()}]
-  def parse_cards(input) do
+  defp parse_cards(input) do
     String.split(input, "\n")
-    |> Enum.map(fn(card_bid) -> String.split(card_bid, " ") |> card_tuple end)
+    |> Enum.map(& String.split(&1, " ") |> card_tuple)
   end
 
   @spec card_tuple(list()) :: {String.t(), integer()}
-  def card_tuple([hand, bid]) do
-    {n_bid, ""} = Integer.parse(bid)
-    {hand, n_bid}
-  end
+  def card_tuple([hand, bid]), do: ({n_bid, ""} = Integer.parse(bid); {hand, n_bid})
 
   @spec hand_classifier([{String.t(), integer()}]) :: map()
   def hand_classifier(hands) do
     classifier = [{:high, []}, {:one, []}, {:two, []}, {:three, []}, {:full, []}, {:four, []}, {:five, []}]
     hand_classifier(hands, Map.new(classifier))
   end
-  def hand_classifier([], classifier) do
-    classifier
-  end
-  def hand_classifier([{hand, bid} | tail], classifier) do
+  defp hand_classifier([], classifier), do: classifier
+  defp hand_classifier([{hand, bid} | tail], classifier) do
     case String.graphemes(hand) |> MapSet.new |> MapSet.size do
       5 -> hand_classifier(tail, add_to_classifier({hand, bid}, classifier, :high))
       4 -> hand_classifier(tail, add_to_classifier({hand, bid}, classifier, :one))
@@ -47,16 +41,14 @@ defmodule Day7 do
     end
   end
 
-  def is_threekind({hand, bid}, classifier) do
+  defp is_threekind({hand, bid}, classifier) do
     counters = String.graphemes(hand) |> MapSet.new |> MapSet.to_list() |> Enum.zip([0,0,0]) |> Map.new
     case is_threekind2(String.graphemes(hand), counters) do
       true -> add_to_classifier({hand, bid}, classifier, :three)
       _ -> add_to_classifier({hand, bid}, classifier, :two)
     end
   end
-  defp is_threekind2([], _) do
-    false
-  end
+  defp is_threekind2([], _), do: false
   defp is_threekind2([str | tail], counters) do
     new_counter = Map.fetch!(counters, str) + 1
     case new_counter do
@@ -65,7 +57,7 @@ defmodule Day7 do
     end
   end
 
-  def is_fourkind({hand, bid}, classifier) do
+  defp is_fourkind({hand, bid}, classifier) do
     open_hand = String.graphemes(hand)
     case Enum.count(open_hand, & &1 === hd(open_hand)) do
       1 -> add_to_classifier({hand, bid}, classifier, :four)
@@ -74,13 +66,13 @@ defmodule Day7 do
     end
   end
 
-  def add_to_classifier(hand, classifier, token) do
+  defp add_to_classifier(hand, classifier, token) do
     new_class = Map.fetch!(classifier, token)
     |> Kernel.++([hand])
     Map.put(classifier, token, new_class)
   end
 
-  def compare_classes(classifier) do
+  defp compare_classes(classifier) do
     compare_classes(classifier, :high)
     |> compare_classes(:one)
     |> compare_classes(:two)
@@ -89,13 +81,13 @@ defmodule Day7 do
     |> compare_classes(:four)
     |> compare_classes(:five)
   end
-  def compare_classes(classifier, token) do
+  defp compare_classes(classifier, token) do
     hands = Map.fetch!(classifier, token)
     |> Enum.sort(fn({hand1, _}, {hand2, _}) -> compare_hands(String.graphemes(hand1), String.graphemes(hand2)) end)
     Map.put(classifier, token, hands)
   end
 
-  def compare_hands([h1|t1], [h2 | t2]) do
+  defp compare_hands([h1|t1], [h2 | t2]) do
     cond do
       card_points(h1) === card_points(h2) -> compare_hands(t1, t2)
       card_points(h1) < card_points(h2) -> true
@@ -103,27 +95,14 @@ defmodule Day7 do
     end
   end
 
-  def card_points("A") do
-    14
-  end
-  def card_points("K") do
-    13
-  end
-  def card_points("Q") do
-    12
-  end
-  def card_points("J") do
-    11
-  end
-  def card_points("T") do
-    10
-  end
-  def card_points(n_card) do
-    {number, ""} = Integer.parse(n_card)
-    number
-  end
+  defp card_points("A"), do: 14
+  defp card_points("K"), do: 13
+  defp card_points("Q"), do: 12
+  defp card_points("J"), do: 11
+  defp card_points("T"), do: 10
+  defp card_points(n_card), do: ({number, ""} = Integer.parse(n_card); number)
 
-  def total_winnings(classifier) do
+  defp total_winnings(classifier) do
     [:high, :one, :two, :three, :full, :four, :five]
     |> List.foldr([], fn(token, acc) -> Map.fetch!(classifier, token) ++ acc end)
     |> Enum.with_index
@@ -148,17 +127,15 @@ defmodule Day7 do
     classifier = [{:high, []}, {:one, []}, {:two, []}, {:three, []}, {:full, []}, {:four, []}, {:five, []}]
     hand_classifier2(hands, Map.new(classifier))
   end
-  def hand_classifier2([], classifier) do
-    classifier
-  end
-  def hand_classifier2([{hand, bid} | tail], classifier) do
+  defp hand_classifier2([], classifier), do: classifier
+  defp hand_classifier2([{hand, bid} | tail], classifier) do
     cond do
       String.graphemes(hand) |> Enum.count(& &1 == "J") > 0 -> hand_classifier2(tail, joker_hands({hand,bid}, classifier))
       true -> hand_classifier2(tail, classic_hands({hand,bid}, classifier))
     end
   end
 
-  def joker_hands({hand, bid}, classifier) do
+  defp joker_hands({hand, bid}, classifier) do
     case String.graphemes(hand) |> MapSet.new |> MapSet.size do
       1 -> add_to_classifier({hand, bid}, classifier, :five)
       2 -> add_to_classifier({hand, bid}, classifier, :five)
@@ -168,7 +145,7 @@ defmodule Day7 do
     end
   end
 
-  def alone_joker({hand, bid}, classifier) do
+  defp alone_joker({hand, bid}, classifier) do
     mapset_list = String.graphemes(hand) |> MapSet.new |> MapSet.to_list()
     zero_list = List.duplicate(0, length(mapset_list))
     counters = mapset_list |> Enum.zip(zero_list) |> Map.new
@@ -188,7 +165,7 @@ defmodule Day7 do
   end
 
 
-  def compare_classes2(classifier) do
+  defp compare_classes2(classifier) do
     compare_classes2(classifier, :high)
     |> compare_classes2(:one)
     |> compare_classes2(:two)
@@ -197,13 +174,13 @@ defmodule Day7 do
     |> compare_classes2(:four)
     |> compare_classes2(:five)
   end
-  def compare_classes2(classifier, token) do
+  defp compare_classes2(classifier, token) do
     hands = Map.fetch!(classifier, token)
     |> Enum.sort(fn({hand1, _}, {hand2, _}) -> compare_hands2(String.graphemes(hand1), String.graphemes(hand2)) end)
     Map.put(classifier, token, hands)
   end
 
-  def compare_hands2([h1|t1], [h2 | t2]) do
+  defp compare_hands2([h1|t1], [h2 | t2]) do
     cond do
       card_points2(h1) === card_points2(h2) -> compare_hands2(t1, t2)
       card_points2(h1) < card_points2(h2) -> true
@@ -211,7 +188,7 @@ defmodule Day7 do
     end
   end
 
-  def classic_hands({hand, bid}, classifier) do
+  defp classic_hands({hand, bid}, classifier) do
     case String.graphemes(hand) |> MapSet.new |> MapSet.size do
       5 -> add_to_classifier({hand, bid}, classifier, :high)
       4 -> add_to_classifier({hand, bid}, classifier, :one)
@@ -221,24 +198,11 @@ defmodule Day7 do
     end
   end
 
-  def card_points2("A") do
-    13
-  end
-  def card_points2("K") do
-    12
-  end
-  def card_points2("Q") do
-    11
-  end
-  def card_points2("T") do
-    10
-  end
-  def card_points2("J") do
-    1
-  end
-  def card_points2(n_card) do
-    {number, ""} = Integer.parse(n_card)
-    number
-  end
+  defp card_points2("A"), do: 13
+  defp card_points2("K"), do: 12
+  defp card_points2("Q"), do: 11
+  defp card_points2("T"), do: 10
+  defp card_points2("J"), do: 1
+  defp card_points2(n_card), do: ({number, ""} = Integer.parse(n_card); number)
 
 end
