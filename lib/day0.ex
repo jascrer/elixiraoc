@@ -8,7 +8,7 @@ defmodule Day0 do
   @doc """
   Solution for Day 0 Puzzle 1
   """
-  @spec puzzle1(String.t()) :: String.t()
+  @spec puzzle1(String.t()) :: any()
   def puzzle1(fileName) do
     {:ok, contents} = File.read(fileName)
     contents
@@ -17,8 +17,9 @@ defmodule Day0 do
   @doc """
   Solution for Day 0 Puzzle 2
   """
-  @spec puzzle2(String.t()) :: nil
-  def puzzle2(_fileName) do
-
+  @spec puzzle2(String.t()) :: any()
+  def puzzle2(fileName) do
+    {:ok, contents} = File.read(fileName)
+    contents
   end
 end
