@@ -13,9 +13,7 @@ defmodule Day16 do
     {:ok, contents} = File.read(fileName)
     contents
     |> parse_cavern()
-    |> energize_cavern()
-    #|> count_symbols
-    #|>stringify()
+    |> energize_cavern([{0,0, :right}])
   end
 
   defp parse_cavern(cavern_map) do
@@ -36,10 +34,10 @@ defmodule Day16 do
   end
 
 
-  @spec energize_cavern([[binary()]]) :: integer()
-  def energize_cavern(cavern_map) do
+  @spec energize_cavern([[binary()]], [{integer(), integer(), atom()}]) :: integer()
+  def energize_cavern(cavern_map, entrance) do
     cells = cavern_map |> Enum.map(& Enum.map(&1, fn(_) -> "." end))
-    energize_cavern(cavern_map, cells, [{0,0, :right}], [])
+    energize_cavern(cavern_map, cells, entrance, [])
   end
   defp energize_cavern(_, _cells, [], closed) do
     closed |> Enum.map(fn({row, col, _}) -> {row, col} end) |> MapSet.new() |> MapSet.to_list() |> length
@@ -108,5 +106,37 @@ defmodule Day16 do
   def puzzle2(fileName) do
     {:ok, contents} = File.read(fileName)
     contents
+    |> parse_cavern()
+    |> starting_points()
+  end
+
+  defp starting_points(cavern) do
+    row_length = (cavern |> length) - 1
+    col_length = (cavern |> Enum.at(0) |> length()) - 1
+    max_from_top = max_top(cavern, col_length)
+    max_from_left = max_left(cavern, row_length)
+    max_from_south = max_south(cavern, row_length, col_length)
+    max_from_right = max_right(cavern, row_length, col_length)
+    Enum.max([max_from_top, max_from_left, max_from_south, max_from_right])
+  end
+
+  defp max_top(cavern, col_length) do
+    Enum.map(0..col_length, fn(col) -> energize_cavern(cavern, [{0, col, :down}]) end)
+    |> Enum.max
+  end
+
+  defp max_left(cavern, row_length) do
+    Enum.map(0..row_length, fn(row) -> energize_cavern(cavern, [{row, 0, :right}]) end)
+    |> Enum.max
+  end
+
+  defp max_south(cavern, row_length, col_length) do
+    Enum.map(0..col_length, fn(col) -> energize_cavern(cavern, [{row_length, col, :up}]) end)
+    |> Enum.max
+  end
+
+  defp max_right(cavern, row_length, col_length) do
+    Enum.map(0..row_length, fn(row) -> energize_cavern(cavern, [{row, col_length, :left}]) end)
+    |> Enum.max
   end
 end
