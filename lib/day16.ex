@@ -36,14 +36,13 @@ defmodule Day16 do
   end
 
 
-  @spec energize_cavern([[binary()]]) :: [[binary()]]
+  @spec energize_cavern([[binary()]]) :: integer()
   def energize_cavern(cavern_map) do
     cells = cavern_map |> Enum.map(& Enum.map(&1, fn(_) -> "." end))
     energize_cavern(cavern_map, cells, [{0,0, :right}], [])
   end
-  defp energize_cavern(_, cells, [], closed) do
-    MapSet.new(closed) |> MapSet.to_list() |> length |> IO.inspect()
-    cells
+  defp energize_cavern(_, _cells, [], closed) do
+    closed |> Enum.map(fn({row, col, _}) -> {row, col} end) |> MapSet.new() |> MapSet.to_list() |> length
   end
   defp energize_cavern(cavern_map, cells, [{:skip} | tail], closed), do: energize_cavern(cavern_map, cells, tail, closed)
   defp energize_cavern(cavern_map, cells, [{row, col, dir} | tail], closed) do
@@ -60,7 +59,7 @@ defmodule Day16 do
     col_length = cells |> Enum.at(row) |> length
     cond do
       n_row < 0 or n_col < 0 or n_row >= length(cells) or n_col >= col_length -> {:skip}
-      Enum.member?(traversed, {row, col, dir}) -> {:skip}
+      (cells |> Enum.at(row) |> Enum.at(col)) == "#" and Enum.member?(traversed, {row, col, dir}) -> {:skip}
       true -> {n_row, n_col, dir}
     end
   end

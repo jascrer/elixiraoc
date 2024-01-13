@@ -3,9 +3,7 @@ defmodule Day16_test do
   doctest Day16
 
   test "Test the day 16 against the example file" do
-    #assert Day16.puzzle1("test/testfiles/day16_test.txt") == 46
-    #Day16.puzzle1("test/testfiles/day16_input.txt") |> Day16.count_symbols |> IO.inspect
-    #File.write("test/testfiles/day16_output.txt", Day16.puzzle1("test/testfiles/day16_input.txt") |> Day16.stringify)
+    assert (Day16.puzzle1("test/testfiles/day16_test.txt")) == 46
   end
 
   test "energize a cell" do
