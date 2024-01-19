@@ -69,7 +69,46 @@ defmodule Day19 do
     {:ok, contents} = File.read(fileName)
     contents
     |> Day19.Parser.map
+    |> process_instr
   end
+
+  @spec process_instr({atom(), [...], String.t(), map(), {integer(), integer()}, integer()}) :: integer()
+  def process_instr({_, [map, instrs], "", _, _, _}) do
+    instrs
+    |> List.foldl([], & [navigate_map("in", map, &1) | &2])
+    |> Enum.filter(& &1 !== "R")
+    |> Enum.map(& &1 |> Map.values() |> Enum.sum)
+    |> Enum.sum
+  end
+
+  @spec navigate_map(String.t(), map(), map()) :: String.t()
+  def navigate_map(key, map, head) do
+    case navigate_key(Map.fetch!(map, key), head) do
+      "A" -> head
+      "R" -> "R"
+      value -> navigate_map(value, map, head)
+    end
+  end
+
+  @spec navigate_key([{String.t(), String.t(), integer(), String.t()} | {String.t}], map()) :: String.t()
+  def navigate_key(ind, _data) when length(ind) == 1 do
+    {value} = hd(ind); value
+  end
+  def navigate_key([{variable, comparison, quantity, result} | tail], data) do
+    case Map.fetch(data, variable) do
+      {:ok, value} ->
+        cond do
+          satisfies?(comparison, value, quantity) -> result
+          true -> navigate_key(tail, data)
+        end
+      :error -> navigate_key(tail, data)
+    end
+  end
+
+  defp satisfies?(">", value1, value2), do: value1 > value2
+  defp satisfies?("<", value1, value2), do: value1 < value2
+
+
 
   @doc """
   Solution for Day 19 Puzzle 2
@@ -78,5 +117,12 @@ defmodule Day19 do
   def puzzle2(fileName) do
     {:ok, contents} = File.read(fileName)
     contents
+    |> Day19.Parser.map
+    |> create_tree()
+  end
+
+  @spec create_tree({atom(), [...], String.t(), map(), {integer(), integer()}, integer()}) :: integer()
+  def create_tree({_, [map, _], "", _, _, _}) do
+    map
   end
 end
