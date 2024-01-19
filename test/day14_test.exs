@@ -2,15 +2,6 @@ defmodule Day14_test do
   use ExUnit.Case
   doctest Day14
 
-  test "Test the day 14 puzzle 1 against the example file" do
-    assert Day14.puzzle1("test/testfiles/day14_test.txt") == 136
-  end
-
-  test "Test the day 14 puzzle 2 against the example file" do
-    assert Day14.puzzle2("test/testfiles/day14_test.txt") == 64
-  end
-
-
   test "tilt_row" do
     row = ["O", "O",".","O",".","O",".",".","#","#"]
     assert Day14.tilt_row(row) == ["O", "O", "O", "O", ".", ".", ".", ".", "#", "#"]

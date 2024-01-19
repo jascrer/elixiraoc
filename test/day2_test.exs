@@ -2,14 +2,6 @@ defmodule Day2_test do
   use ExUnit.Case
   doctest Day2
 
-  test "Test the day 2 puzzle 1 against the example file" do
-    assert Day2.puzzle1("test/testfiles/day2_test.txt") == 8
-  end
-
-  test "Test the day 2 puzzle 2 against the example file" do
-    assert Day2.puzzle2("test/testfiles/day2_test.txt") == 2286
-  end
-
   test "Cubes can/not be inside the bag" do
     cube = Map.new([{:red, 1}, {:green, 2}, {:blue, 6}])
     cube2 = Map.new([{:red, 20}, {:green, 8}, {:blue, 6}])

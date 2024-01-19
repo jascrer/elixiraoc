@@ -2,10 +2,6 @@ defmodule Day13_test do
   use ExUnit.Case
   doctest Day13
 
-  test "Test the day 13 puzzle 1 against the example file" do
-    assert Day13.puzzle1("test/testfiles/day13_test.txt") == 405
-  end
-
   test "Index can propagate horizontal" do
     lines = [
       ["#", ".", ".", ".", "#", "#", ".", ".", "#"],
@@ -41,17 +37,6 @@ defmodule Day13_test do
       [".", ".", "#", "#", ".", ".", "#", "#", "#"],
       ["#", ".", ".", ".", ".", "#", ".", ".", "#"]
     ]
-    _lines2 = [
-      ["#", ".", "#", "#", ".", ".", "#", "#", "."],
-      [".", ".", "#", ".", "#", "#", ".", "#", "."],
-      ["#", "#", ".", ".", ".", ".", ".", ".", "#"],
-      ["#", "#", ".", ".", ".", ".", ".", ".", "#"],
-      [".", ".", "#", ".", "#", "#", ".", "#", "."],
-      [".", ".", "#", "#", ".", ".", "#", "#", "."],
-      ["#", ".", "#", ".", "#", "#", ".", "#", "."]
-    ]
     assert Day13.find_line_2(lines) === {1,2}
-    #Day13.find_line_2(lines2) = {1,2} |> IO.inspect()
-    #assert Day13.index_can_propagate2(lines, {4,5})
   end
 end

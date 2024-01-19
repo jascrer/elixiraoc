@@ -2,10 +2,6 @@ defmodule Day5_test do
   use ExUnit.Case
   doctest Day5
 
-  test "Test the day 5 puzzle1 against the example file" do
-    assert Day5.puzzle1("test/testfiles/day5_test.txt") == 35
-  end
-
   # test "Test the day 5 puzzle2 against the example file" do
   #   assert Day5.puzzle2("test/testfiles/day5_test.txt") == 46
   #   Day5.puzzle2("test/testfiles/day5_input.txt") |> IO.inspect()

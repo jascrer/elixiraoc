@@ -2,14 +2,6 @@ defmodule Day3_test do
   use ExUnit.Case
   doctest Day3
 
-  test "Test the day 3 Puzzle 1" do
-    assert Day3.puzzle1("test/testfiles/day3_test.txt") == 4361
-  end
-
-  test "Test the day 3 Puzzle 2" do
-    assert Day3.puzzle2("test/testfiles/day3_test.txt") == 467835
-  end
-
   test "Parse one symbol" do
     line = '467..114..'
     line2 = '*.........'

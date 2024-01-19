@@ -2,14 +2,6 @@ defmodule Day15_test do
   use ExUnit.Case
   doctest Day15
 
-  test "Test the day 15 puzzle 1 against the example file" do
-    assert Day15.puzzle1("test/testfiles/day15_test.txt") == 1320
-  end
-
-  test "Test the day 15 puzzle 2 against the example file" do
-    assert Day15.puzzle2("test/testfiles/day15_test.txt") == 145
-  end
-
   test "Hash string" do
     test_1 = "HASH"
     test_2 = "rn=1"

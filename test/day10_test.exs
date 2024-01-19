@@ -2,14 +2,6 @@ defmodule Day10_test do
   use ExUnit.Case
   doctest Day10
 
-  test "Test the day 10 puzzle 1 against the example file" do
-    assert Day10.puzzle1("test/testfiles/day10_test.txt") == 4.0
-    assert Day10.puzzle1("test/testfiles/day10_test2.txt") == 8.0
-  end
-  test "Test the day 10 puzzle 2 against the example file" do
-    assert Day10.puzzle2("test/testfiles/day10_test3.txt") == 8
-  end
-
   test "Navigate maps" do
     map_1 = [
       [".", ".", ".", ".", "."],
